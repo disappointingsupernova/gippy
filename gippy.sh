@@ -4,7 +4,7 @@
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.0.9"
+script_version="1.0.10"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
@@ -143,7 +143,7 @@ function check_for_stored_pgp_key() {
 
 function create_email_content() {
     IFS=',' read -ra backup_array <<< "$backuplocations"
-    zip -r $zipname ${backup_array[@]}
+    zip -r "$zipname" ${backup_array[@]}
     
     gpg --sign --encrypt -r "$pgp_certificate" "$zipname"
     
@@ -187,15 +187,22 @@ function send_email() {
         echo "From: gpg@$(hostname)"
         echo "To: $email_address"
         echo "Subject: $application - $(hostname) - $display_name"
-	    echo
+        echo "MIME-Version: 1.0"
+        echo "Content-Type: multipart/mixed; boundary=\"GIPPY-BOUNDARY\""
+        echo
+        echo "--GIPPY-BOUNDARY"
+        echo "Content-Type: text/plain"
+        echo
         cat "$random_folder/pgp_message.txt.asc"
         echo
+        echo "--GIPPY-BOUNDARY"
         echo "Content-Type: application/octet-stream; name=\"$(basename "$encryptedziplocation")\""
         echo "Content-Transfer-Encoding: base64"
         echo "Content-Disposition: attachment; filename=\"$(basename "$encryptedziplocation")\""
         echo
         base64 "$encryptedziplocation"
         echo
+        echo "--GIPPY-BOUNDARY--"
     } | sendmail -t
     cleanup
 }
