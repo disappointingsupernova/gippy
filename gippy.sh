@@ -11,6 +11,7 @@ repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
 log_file="/var/log/${display_name}.log"
 log_messages=""
+no_update=0 #Script should check for updates on startup
 
 # Ensure gpg-agent is running
 if ! pgrep -x "gpg-agent" > /dev/null; then
