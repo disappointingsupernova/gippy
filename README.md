@@ -1,14 +1,14 @@
 # Gippy - The GPG Zip Tool
 
-Gippy is a bash script that creates a zip archive of a specified directory, encrypts it using GPG, and either emails it to a provided email address or saves it to a specified location.
+Gippy is a bash script that creates a zip archive of specified directories, encrypts it using GPG, and either emails it to a provided email address or saves it to a specified location.
 
 ## Description
 
-Gippy automates the process of creating a secure, encrypted backup of a directory and either emailing it or saving it to a specified location. The script uses zip to create the archive, gpg to encrypt it, and `sendmail` to send it. If command outputs are specified, they are included in the email body.
+Gippy automates the process of creating a secure, encrypted backup of directories and either emailing it or saving it to a specified location. The script uses zip to create the archive, gpg to encrypt it, and `sendmail` to send it. If command outputs are specified, they are included in the email body.
 
 ## Features
 
-- Creates a zip archive of a specified directory.
+- Creates a zip archive of specified directories.
 - Encrypts the zip archive using a PGP certificate.
 - Emails the encrypted zip archive to a provided email address.
 - Optionally includes the outputs of specified commands in the encrypted email body.
@@ -28,7 +28,7 @@ Gippy automates the process of creating a secure, encrypted backup of a director
 ## Usage
 
 ```bash
-./gippy.sh -e email_address -a application -z zipname -b backuplocation [-p pgp_certificate] [-c commands] [-o output] [--update]
+./gippy.sh -e email_address -a application -z zipname -b backuplocations [-p pgp_certificate] [-c commands] [-o output] [--update]
 ```
 
 ## Options
@@ -36,7 +36,7 @@ Gippy automates the process of creating a secure, encrypted backup of a director
     -e : Email address to send the backup. Required unless -o is specified.
     -a : Application name. Required.
     -z : Name for the zip file (will be stored in a temporary location). Required.
-    -b : Backup location (directory to back up). Required.
+    -b : Backup locations (comma-separated list of directories to back up). Required.
     -p : PGP certificate fingerprint (optional, default: 7D2D35B359A3BB1AE7A2034C0CB5BB0EFE677CA8).
     -c : Commands to include in the email body (comma-separated).
     -o : Output location to save the encrypted zip file (if specified, email is not sent).
@@ -48,6 +48,11 @@ Gippy automates the process of creating a secure, encrypted backup of a director
 Email Backup with Default PGP Certificate:
 ``` bash
 ./gippy.sh -e user@example.com -a "My Application" -z backup.zip -b /etc/myapp
+```
+
+Email Multiple Backup Locations with Default PGP Certificate:
+``` bash
+./gippy.sh -e user@example.com -a "My Application" -z backup.zip -b /etc/myapp,/etc/iptables 
 ```
 
 Email Backup with Custom PGP Certificate and Command Outputs:
