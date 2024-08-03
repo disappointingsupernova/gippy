@@ -4,7 +4,7 @@
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.0.1"
+script_version="1.0.2"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
@@ -170,11 +170,24 @@ function create_email_content() {
 }
 
 function process_error() {
-    echo -e "$error\n$application - $(hostname)" | mail -s "Error $application - $(hostname) - $(date)" "$email_address" --append="FROM:error@$(hostname)"
+    {
+        echo "From: error@$(hostname)"
+        echo "To: $email_address"
+        echo "Subject: Error $application - $(hostname) - $(date)"
+        echo
+        echo "$error"
+        echo "$application - $(hostname)"
+    } | sendmail -t
 }
 
 function send_email() {
-    mail -s "$application - $(hostname)" "$email_address" --attach="$encryptedziplocation" --append="FROM:gpg@$(hostname)" < "$random_folder/pgp_message.txt.asc"
+    {
+        echo "From: gpg@$(hostname)"
+        echo "To: $email_address"
+        echo "Subject: $application - $(hostname)"
+        echo
+        cat "$random_folder/pgp_message.txt.asc"
+    } | sendmail -t
     cleanup
 }
 
