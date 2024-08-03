@@ -5,7 +5,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.1.7"
+script_version="1.1.8"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
@@ -141,8 +141,7 @@ ensure_command mail mailutils mailx
 ensure_command curl curl curl
 
 # Parse command line arguments and ensure they are all provided
-no_update=0
-while getopts "e:a:z:b:p:c:o:h:v-:" opt; do
+while getopts "e:a:z:b:p:c:o:hv-:" opt; do
     case ${opt} in
         e) email_address=${OPTARG} ;;
         a) application=${OPTARG} ;;
@@ -158,6 +157,7 @@ while getopts "e:a:z:b:p:c:o:h:v-:" opt; do
                 update) update_script ;;
                 no-update) no_update=1 ;;
                 version) version ;;
+                help) help ;;
                 *) usage ;;
             esac
             ;;
