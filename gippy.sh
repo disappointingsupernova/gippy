@@ -5,7 +5,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.1.6"
+script_version="1.1.7"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
@@ -23,7 +23,7 @@ fi
 
 # Function to display usage
 function usage() {
-    echo "Usage: $0 [-e email_address] [-a application] [-z zipname] [-b backuplocations] [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version]"
+    echo "Usage: $0 -e email_address -a application -z zipname -b backuplocations [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version]"
     echo "Try '$0 -h' for more information."
     exit 1
 }
@@ -32,7 +32,7 @@ function usage() {
 function help() {
     echo "$display_name - $script_description"
     echo
-    echo "Usage: $0 [-e email_address] [-a application] [-z zipname] [-b backuplocations] [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version]"
+    echo "Usage: $0 -e email_address -a application -z zipname -b backuplocations [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version]"
     echo
     echo "Options:"
     echo "  -e    Email address to send the backup"

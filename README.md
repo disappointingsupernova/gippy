@@ -16,6 +16,8 @@ Gippy automates the process of creating a secure, encrypted backup of directorie
 - Ensures `zip`, `gpg`, `mailutils`, `sendmail`, and `curl` are installed before execution on both Debian-based and Redhat-based systems.
 - Checks for updates from a GitHub repository and prompts the user to install updates.
 - Supports non-interactive updating with the `--update` option.
+- Allows skipping update checks with the `--no-update` option.
+- Logs activity and checks for email success. Logs are included in the email body.
 
 ## Requirements
 
