@@ -185,28 +185,15 @@ function send_email() {
         echo "From: gpg@$(hostname)"
         echo "To: $email_address"
         echo "Subject: $application - $(hostname) - $display_name"
-        echo "MIME-Version: 1.0"
-        echo "Content-Type: multipart/mixed; boundary=\"GIPPY-BOUNDARY\""
-        echo
-        echo "--GIPPY-BOUNDARY"
-        echo "Content-Type: text/plain"
-        echo
-        echo "This is a PGP/MIME encrypted message."
-        echo
-        echo "--GIPPY-BOUNDARY"
-        echo "Content-Type: application/pgp-encrypted; name=\"message.asc\""
-        echo "Content-Disposition: inline"
-        echo
+	    echo
         cat "$random_folder/pgp_message.txt.asc"
         echo
-        echo "--GIPPY-BOUNDARY"
         echo "Content-Type: application/octet-stream; name=\"$(basename "$encryptedziplocation")\""
         echo "Content-Transfer-Encoding: base64"
         echo "Content-Disposition: attachment; filename=\"$(basename "$encryptedziplocation")\""
         echo
         base64 "$encryptedziplocation"
         echo
-        echo "--GIPPY-BOUNDARY--"
     } | sendmail -t
     cleanup
 }
