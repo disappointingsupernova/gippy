@@ -4,7 +4,7 @@
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.0.6"
+script_version="1.0.7"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
@@ -14,7 +14,7 @@ pgp_certificate="7D2D35B359A3BB1AE7A2034C0CB5BB0EFE677CA8"
 
 # Function to display usage
 function usage() {
-    echo "Usage: $0 -e email_address -a application -z zipname -b backuplocation [-p pgp_certificate] [-c commands] [-o output] [--update]"
+    echo "Usage: $0 [-e email_address] [-a application] [-z zipname] [-b backuplocations] [-p pgp_certificate] [-c commands] [-o output] [--update]"
     echo "Try '$0 -h' for more information."
     exit 1
 }
@@ -23,13 +23,13 @@ function usage() {
 function help() {
     echo "$display_name - $script_description"
     echo
-    echo "Usage: $0 -e email_address -a application -z zipname -b backuplocation [-p pgp_certificate] [-c commands] [-o output] [--update]"
+    echo "Usage: $0 [-e email_address] [-a application] [-z zipname] [-b backuplocations] [-p pgp_certificate] [-c commands] [-o output] [--update]"
     echo
     echo "Options:"
     echo "  -e    Email address to send the backup"
     echo "  -a    Application name"
     echo "  -z    Name for the zip file (will be stored in a temporary location)"
-    echo "  -b    Backup location (directory to back up)"
+    echo "  -b    Backup locations (comma-separated list of directories to back up)"
     echo "  -p    PGP certificate fingerprint (optional, default: $pgp_certificate)"
     echo "  -c    Commands to include in the email body (comma-separated)"
     echo "  -o    Output location to save the encrypted zip file (if specified, email is not sent)"
@@ -37,7 +37,7 @@ function help() {
     echo "  -h    Display this help and exit"
     echo
     echo "Description:"
-    echo "This script creates a zip archive of a specified directory, encrypts it using GPG,"
+    echo "This script creates a zip archive of specified directories, encrypts it using GPG,"
     echo "and emails it to the provided email address. The zip archive and temporary files"
     echo "are stored in a randomly generated temporary directory, which is cleaned up after"
     echo "the email is sent."
@@ -142,7 +142,11 @@ function check_for_stored_pgp_key() {
 }
 
 function create_email_content() {
-    zip -r "$zipname" "$backuplocation"
+    IFS=',' read -ra backup_array <<< "$backuplocations"
+    for backup_dir in "${backup_array[@]}"; do
+        zip -r "$zipname" "$backup_dir"
+    done
+    
     gpg --sign --encrypt -r "$pgp_certificate" "$zipname"
     
     {
