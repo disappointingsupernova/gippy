@@ -4,7 +4,7 @@
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.0.3"
+script_version="1.0.4"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
@@ -192,6 +192,11 @@ function send_email() {
         echo "Content-Type: text/plain"
         echo
         echo "$application - $(hostname) - $(date)"
+        echo
+        echo "--GIPPY-BOUNDARY"
+        echo "Content-Type: application/pgp-encrypted"
+        echo "Content-Disposition: inline"
+        echo
         cat "$random_folder/pgp_message.txt.asc"
         echo
         echo "--GIPPY-BOUNDARY"
@@ -205,6 +210,7 @@ function send_email() {
     } | sendmail -t
     cleanup
 }
+
 function cleanup() {
     rm -r "$random_folder"
 }
