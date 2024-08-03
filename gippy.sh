@@ -5,7 +5,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.1.3"
+script_version="1.1.2"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
@@ -241,4 +241,12 @@ function cleanup() {
 }
 
 function cleanup_no_email() {
-    rm "$random_folder/pg
+    rm "$random_folder/pgp_message.txt" "$random_folder/pgp_message.txt.asc" "$zipname"
+    rmdir "$random_folder"
+}
+
+function begin() {
+    check_for_stored_pgp_key
+}
+
+begin
