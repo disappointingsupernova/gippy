@@ -269,7 +269,7 @@ function send_email() {
     else
         error=$(cat "$temp_err_file")
         log_message "$error"
-        error="Failed to send email to $email_address. Possible reason: attachment too large."
+        error="Failed to send email to $email_address"
         process_error
     fi
     rm "$temp_err_file"
