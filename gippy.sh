@@ -32,7 +32,7 @@ function usage() {
 function help() {
     echo "$display_name - $script_description"
     echo
-    echo "Usage: $0 -e email_address -a application -z zipname -b backuplocations [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version]"
+    echo "Usage: $0 -e email_address -a application -z zipname -b backuplocations [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version] [--help]"
     echo
     echo "Options:"
     echo "  -e    Email address to send the backup"
@@ -45,7 +45,7 @@ function help() {
     echo "  --update  Update the script to the latest version from GitHub"
     echo "  --no-update  Skip the update check"
     echo "  --version, -v  Display the script version and exit"
-    echo "  -h    Display this help and exit"
+    echo "  --help, -h    Display this help and exit"
     echo
     echo "Description:"
     echo "This script creates a zip archive of specified directories, encrypts it using GPG,"
