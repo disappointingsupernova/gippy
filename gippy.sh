@@ -7,7 +7,7 @@ script_description="The GPG Zip Tool"
 script_version="1.0.1"
 github_account="disappointingsupernova"
 repo_name="gippy"
-github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name.sh"
+github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
 
 # Default PGP certificate fingerprint
 pgp_certificate="7D2D35B359A3BB1AE7A2034C0CB5BB0EFE677CA8"
