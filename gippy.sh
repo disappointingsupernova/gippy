@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Script name and description
-script_name="Gippy"
+script_name="gippy.sh" # Filename of the script
+display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.0.0"
+script_version="1.0.1"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name.sh"
@@ -20,7 +21,7 @@ function usage() {
 
 # Function to display help
 function help() {
-    echo "$script_name - $script_description"
+    echo "$display_name - $script_description"
     echo
     echo "Usage: $0 -e email_address -a application -z zipname -b backuplocation [-p pgp_certificate] [-c commands] [-o output] [--update]"
     echo
@@ -73,7 +74,7 @@ function update_script() {
     local script_path="$(realpath "$0")"
     curl -s -o "$script_path" $github_repo
     chmod +x "$script_path"
-    echo "$script_name has been updated to the latest version. Please restart the script."
+    echo "$display_name has been updated to the latest version. Please restart the script."
     exit 0
 }
 
@@ -81,7 +82,7 @@ function update_script() {
 function check_for_updates() {
     local latest_version=$(curl -s https://raw.githubusercontent.com/$github_account/$repo_name/main/VERSION)
     if [ "$script_version" != "$latest_version" ]; then
-        echo "A new version of $script_name is available (version $latest_version)."
+        echo "A new version of $display_name is available (version $latest_version)."
         read -p "Do you want to update? (y/n): " choice
         if [ "$choice" = "y" ]; then
             update_script
@@ -127,7 +128,7 @@ if [ -z "$application" ] || [ -z "$zipname" ] || [ -z "$backuplocation" ]; then
 fi
 
 # Create a random folder in /tmp
-random_folder=$(mktemp -d -t gippy-XXXXXXXXXX)
+random_folder=$(mktemp -d -t ${display_name}_XXXXXXXXXX)
 zipname="$random_folder/$zipname"
 encryptedziplocation="$zipname.gpg"
 
