@@ -5,7 +5,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.1.8"
+script_version="1.1.9"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
@@ -241,6 +241,7 @@ function process_error() {
 }
 
 function send_email() {
+    temp_err_file=$(mktemp)
     {
         echo "From: gpg@$(hostname)"
         echo "To: $email_address"
@@ -261,14 +262,17 @@ function send_email() {
         base64 "$encryptedziplocation"
         echo
         echo "--GIPPY-BOUNDARY--"
-    } | $SENDMAIL_CMD -t
+    } | $SENDMAIL_CMD -t 2> "$temp_err_file"
 
     if [ $? -eq 0 ]; then
         log_message "Email sent successfully to $email_address"
     else
+        error=$(cat "$temp_err_file")
+        log_message "$error"
         error="Failed to send email to $email_address. Possible reason: attachment too large."
         process_error
     fi
+    rm "$temp_err_file"
     cleanup
 }
 
