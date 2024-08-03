@@ -41,19 +41,19 @@ Gippy is a bash script that creates a zip archive of a specified directory, encr
 
 ## Examples
 
-    Email Backup with Default PGP Certificate:
+Email Backup with Default PGP Certificate:
 ``` bash
 ./gippy.sh -e user@example.com -a "My Application" -z backup.zip -b /etc/myapp
 ```
 
-    Email Backup with Custom PGP Certificate and Command Outputs:
+Email Backup with Custom PGP Certificate and Command Outputs:
 ``` bash
 ./gippy.sh -e user@example.com -a "My Application" -z backup.zip -b /etc/myapp -p 1234567890ABCDEF1234567890ABCDEF12345678 -c "/usr/sbin/iptables-save,/usr/bin/ip6tables-save"
 ```
 
-    Save Backup to File:
+Save Backup to File:
 ``` bash
-    ./gippy.sh -a "My Application" -z backup.zip -b /etc/myapp -o /path/to/output/backup.zip.gpg
+./gippy.sh -a "My Application" -z backup.zip -b /etc/myapp -o /path/to/output/backup.zip.gpg
 ```
 
 ## Description
