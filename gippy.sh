@@ -4,7 +4,7 @@
 script_name="Gippy"
 script_description="The GPG Zip Tool"
 script_version="1.0.0"
-github_account="disaapointingsupernova"
+github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name.sh"
 
