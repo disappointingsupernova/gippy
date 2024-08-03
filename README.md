@@ -62,15 +62,14 @@ Gippy automates the process of creating a secure, encrypted backup of a director
 
 ## Installation
 
-    Download the gippy.sh script and make it executable:
+Download the gippy.sh script and make it executable:
 
 ``` bash
-    chmod +x gippy.sh
+chmod +x gippy.sh
 ```
 ## License
 
 This project is licensed under the MIT License. See the LICENSE file for details.
-Author
 
 ## Author
 
