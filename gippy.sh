@@ -4,7 +4,9 @@
 script_name="Gippy"
 script_description="The GPG Zip Tool"
 script_version="1.0.0"
-github_repo="https://raw.githubusercontent.com/disappointingsupernova/gippy/main/gippy.sh"
+github_account="disaapointingsupernova"
+repo_name="gippy"
+github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name.sh"
 
 # Default PGP certificate fingerprint
 pgp_certificate="7D2D35B359A3BB1AE7A2034C0CB5BB0EFE677CA8"
@@ -77,7 +79,7 @@ function update_script() {
 
 # Function to check for script updates
 function check_for_updates() {
-    local latest_version=$(curl -s https://raw.githubusercontent.com/yourusername/gippy/main/VERSION)
+    local latest_version=$(curl -s https://raw.githubusercontent.com/$github_account/$repo_name/main/VERSION)
     if [ "$script_version" != "$latest_version" ]; then
         echo "A new version of $script_name is available (version $latest_version)."
         read -p "Do you want to update? (y/n): " choice
