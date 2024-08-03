@@ -1,4 +1,5 @@
 #!/bin/bash
+export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 
 # Script name and description
 script_name="gippy.sh" # Filename of the script
