@@ -5,10 +5,12 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.1.4"
+script_version="1.1.5"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
+log_file="/var/log/${display_name}.log"
+log_messages=""
 
 # Ensure gpg-agent is running
 if ! pgrep -x "gpg-agent" > /dev/null; then
@@ -33,7 +35,7 @@ function help() {
     echo "  -a    Application name"
     echo "  -z    Name for the zip file (will be stored in a temporary location)"
     echo "  -b    Backup locations (comma-separated list of directories to back up)"
-    echo "  -p    PGP certificate fingerprint (optional, default: $pgp_certificate)"
+    echo "  -p    PGP certificate fingerprint (optional, default: 7D2D35B359A3BB1AE7A2034C0CB5BB0EFE677CA8)"
     echo "  -c    Commands to include in the email body (comma-separated)"
     echo "  -o    Output location to save the encrypted zip file (if specified, email is not sent)"
     echo "  --update  Update the script to the latest version from GitHub"
@@ -62,13 +64,22 @@ function version() {
     exit 0
 }
 
+# Function to log messages
+function log_message() {
+    local message="$1"
+    local timestamped_message="$(date +'%Y-%m-%d %H:%M:%S') - $message"
+    echo "$timestamped_message"
+    echo "$timestamped_message" >> "$log_file"
+    log_messages+="$timestamped_message"$'\n'
+}
+
 # Function to find the full path of a command
 function find_command() {
     local cmd="$1"
     local path
     path=$(which "$cmd")
     if [ -z "$path" ]; then
-        echo "Error: $cmd not found. Please ensure it is installed and available in your PATH."
+        log_message "Error: $cmd not found. Please ensure it is installed and available in your PATH."
         exit 1
     fi
     echo "$path"
@@ -86,13 +97,13 @@ function ensure_command() {
     local deb_pkg="$2"
     local rpm_pkg="$3"
     if ! command -v $cmd &> /dev/null; then
-        echo "Installing $cmd"
+        log_message "Installing $cmd"
         if command -v apt-get &> /dev/null; then
             sudo apt-get install $deb_pkg -y
         elif command -v yum &> /dev/null; then
             sudo yum install $rpm_pkg -y
         else
-            echo "Unsupported package manager. Please install $cmd manually."
+            log_message "Unsupported package manager. Please install $cmd manually."
             exit 1
         fi
     fi
@@ -103,7 +114,7 @@ function update_script() {
     local script_path="$(realpath "$0")"
     $CURL_CMD -s -o "$script_path" $github_repo
     chmod +x "$script_path"
-    echo "$display_name has been updated to the latest version. Please restart the script."
+    log_message "$display_name has been updated to the latest version. Please restart the script."
     exit 0
 }
 
@@ -111,7 +122,7 @@ function update_script() {
 function check_for_updates() {
     local latest_version=$($CURL_CMD -s https://raw.githubusercontent.com/$github_account/$repo_name/main/VERSION)
     if [ "$script_version" != "$latest_version" ]; then
-        echo "A new version of $display_name is available (version $latest_version)."
+        log_message "A new version of $display_name is available (version $latest_version)."
         read -p "Do you want to update? (y/n): " choice
         if [ "$choice" = "y" ]; then
             update_script
@@ -195,6 +206,9 @@ function create_email_content() {
                 echo
             done
         fi
+        echo
+        echo "Log messages:"
+        echo "$log_messages"
     } > "$random_folder/pgp_message.txt"
     
     $GPG_CMD --sign --encrypt -a -r "$pgp_certificate" "$random_folder/pgp_message.txt"
@@ -208,6 +222,7 @@ function create_email_content() {
 }
 
 function process_error() {
+    log_message "Error: $error"
     {
         echo "From: error@$(hostname)"
         echo "To: $email_address"
@@ -215,6 +230,9 @@ function process_error() {
         echo
         echo "$error"
         echo "$application - $(hostname)"
+        echo
+        echo "Log messages:"
+        echo "$log_messages"
     } | $SENDMAIL_CMD -t
 }
 
@@ -240,6 +258,13 @@ function send_email() {
         echo
         echo "--GIPPY-BOUNDARY--"
     } | $SENDMAIL_CMD -t
+
+    if [ $? -eq 0 ]; then
+        log_message "Email sent successfully to $email_address"
+    else
+        error="Failed to send email to $email_address. Possible reason: attachment too large."
+        process_error
+    fi
     cleanup
 }
 
