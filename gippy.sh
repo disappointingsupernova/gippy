@@ -4,7 +4,7 @@
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.0.8"
+script_version="1.0.9"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
@@ -110,7 +110,7 @@ while getopts "e:a:z:b:p:c:o:h" opt; do
         e) email_address=${OPTARG} ;;
         a) application=${OPTARG} ;;
         z) zipname=${OPTARG} ;;
-        b) backuplocation=${OPTARG} ;;
+        b) backuplocations=${OPTARG} ;;
         p) pgp_certificate=${OPTARG} ;;
         c) commands=${OPTARG} ;;
         o) output=${OPTARG} ;;
