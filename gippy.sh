@@ -123,7 +123,7 @@ done
 if [ -z "$email_address" ] && [ -z "$output" ]; then
     usage
 fi
-if [ -z "$application" ] || [ -z "$zipname" ] || [ -z "$backuplocation" ]; then
+if [ -z "$application" ] || [ -z "$zipname" ] || [ -z "$backuplocations" ]; then
     usage
 fi
 
