@@ -4,13 +4,18 @@
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.1"
+script_version="1.1.1"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
 
 # Default PGP certificate fingerprint
 pgp_certificate="7D2D35B359A3BB1AE7A2034C0CB5BB0EFE677CA8"
+
+# Ensure gpg-agent is running
+if ! pgrep -x "gpg-agent" > /dev/null; then
+    eval $(gpg-agent --daemon)
+fi
 
 # Function to display usage
 function usage() {
@@ -51,6 +56,24 @@ function help() {
     exit 0
 }
 
+# Function to find the full path of a command
+function find_command() {
+    local cmd="$1"
+    local path
+    path=$(which "$cmd")
+    if [ -z "$path" ]; then
+        echo "Error: $cmd not found. Please ensure it is installed and available in your PATH."
+        exit 1
+    fi
+    echo "$path"
+}
+
+# Paths to required commands
+ZIP_CMD=$(find_command zip)
+GPG_CMD=$(find_command gpg)
+SENDMAIL_CMD=$(find_command sendmail)
+CURL_CMD=$(find_command curl)
+
 # Function to check if a command is installed, and install it if not
 function ensure_command() {
     local cmd="$1"
@@ -72,7 +95,7 @@ function ensure_command() {
 # Function to update the script
 function update_script() {
     local script_path="$(realpath "$0")"
-    curl -s -o "$script_path" $github_repo
+    $CURL_CMD -s -o "$script_path" $github_repo
     chmod +x "$script_path"
     echo "$display_name has been updated to the latest version. Please restart the script."
     exit 0
@@ -80,7 +103,7 @@ function update_script() {
 
 # Function to check for script updates
 function check_for_updates() {
-    local latest_version=$(curl -s https://raw.githubusercontent.com/$github_account/$repo_name/main/VERSION)
+    local latest_version=$($CURL_CMD -s https://raw.githubusercontent.com/$github_account/$repo_name/main/VERSION)
     if [ "$script_version" != "$latest_version" ]; then
         echo "A new version of $display_name is available (version $latest_version)."
         read -p "Do you want to update? (y/n): " choice
@@ -133,7 +156,7 @@ zipname="$random_folder/$zipname"
 encryptedziplocation="$zipname.gpg"
 
 function check_for_stored_pgp_key() {
-    if ! gpg --list-keys "$pgp_certificate" &> /dev/null; then
+    if ! $GPG_CMD --list-keys "$pgp_certificate" &> /dev/null; then
         error="Missing PGP Key"
         process_error
     else
@@ -143,9 +166,9 @@ function check_for_stored_pgp_key() {
 
 function create_email_content() {
     IFS=',' read -ra backup_array <<< "$backuplocations"
-    zip -r "$zipname" ${backup_array[@]}
+    $ZIP_CMD -r "$zipname" "${backup_array[@]}"
     
-    gpg --sign --encrypt -r "$pgp_certificate" "$zipname"
+    $GPG_CMD --sign --encrypt -r "$pgp_certificate" "$zipname"
     
     {
         echo "$application - $(hostname) - $(date)"
@@ -161,7 +184,7 @@ function create_email_content() {
         fi
     } > "$random_folder/pgp_message.txt"
     
-    gpg --sign --encrypt -a -r "$pgp_certificate" "$random_folder/pgp_message.txt"
+    $GPG_CMD --sign --encrypt -a -r "$pgp_certificate" "$random_folder/pgp_message.txt"
     
     if [ -n "$output" ]; then
         mv "$encryptedziplocation" "$output"
@@ -179,7 +202,7 @@ function process_error() {
         echo
         echo "$error"
         echo "$application - $(hostname)"
-    } | sendmail -t
+    } | $SENDMAIL_CMD -t
 }
 
 function send_email() {
@@ -203,7 +226,7 @@ function send_email() {
         base64 "$encryptedziplocation"
         echo
         echo "--GIPPY-BOUNDARY--"
-    } | sendmail -t
+    } | $SENDMAIL_CMD -t
     cleanup
 }
 
