@@ -2,6 +2,10 @@
 
 Gippy is a bash script that creates a zip archive of a specified directory, encrypts it using GPG, and either emails it to a provided email address or saves it to a specified location.
 
+## Description
+
+Gippy automates the process of creating a secure, encrypted backup of a directory and either emailing it or saving it to a specified location. The script uses zip to create the archive, gpg to encrypt it, and `sendmail` to send it. If command outputs are specified, they are included in the email body.
+
 ## Features
 
 - Creates a zip archive of a specified directory.
@@ -56,9 +60,6 @@ Save Backup to File:
 ./gippy.sh -a "My Application" -z backup.zip -b /etc/myapp -o /path/to/output/backup.zip.gpg
 ```
 
-## Description
-
-Gippy automates the process of creating a secure, encrypted backup of a directory and either emailing it or saving it to a specified location. The script uses zip to create the archive, gpg to encrypt it, and `sendmail` to send it. If command outputs are specified, they are included in the email body.
 
 ## Installation
 
