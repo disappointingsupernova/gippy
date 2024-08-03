@@ -5,7 +5,7 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.1.2"
+script_version="1.1.4"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
@@ -17,7 +17,7 @@ fi
 
 # Function to display usage
 function usage() {
-    echo "Usage: $0 [-e email_address] [-a application] [-z zipname] [-b backuplocations] [-p pgp_certificate] [-c commands] [-o output] [--update] [--version]"
+    echo "Usage: $0 [-e email_address] [-a application] [-z zipname] [-b backuplocations] [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version]"
     echo "Try '$0 -h' for more information."
     exit 1
 }
@@ -26,7 +26,7 @@ function usage() {
 function help() {
     echo "$display_name - $script_description"
     echo
-    echo "Usage: $0 [-e email_address] [-a application] [-z zipname] [-b backuplocations] [-p pgp_certificate] [-c commands] [-o output] [--update] [--version]"
+    echo "Usage: $0 [-e email_address] [-a application] [-z zipname] [-b backuplocations] [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version]"
     echo
     echo "Options:"
     echo "  -e    Email address to send the backup"
@@ -37,6 +37,7 @@ function help() {
     echo "  -c    Commands to include in the email body (comma-separated)"
     echo "  -o    Output location to save the encrypted zip file (if specified, email is not sent)"
     echo "  --update  Update the script to the latest version from GitHub"
+    echo "  --no-update  Skip the update check"
     echo "  --version, -v  Display the script version and exit"
     echo "  -h    Display this help and exit"
     echo
@@ -124,16 +125,9 @@ ensure_command gpg gnupg gnupg2
 ensure_command mail mailutils mailx
 ensure_command curl curl curl
 
-# Check for non-interactive update flag
-if [[ " $@ " =~ " --update " ]]; then
-    update_script
-fi
-
-# Check for script updates
-check_for_updates
-
 # Parse command line arguments and ensure they are all provided
-while getopts "e:a:z:b:p:c:o:h:v" opt; do
+no_update=0
+while getopts "e:a:z:b:p:c:o:h:v-:" opt; do
     case ${opt} in
         e) email_address=${OPTARG} ;;
         a) application=${OPTARG} ;;
@@ -144,6 +138,14 @@ while getopts "e:a:z:b:p:c:o:h:v" opt; do
         o) output=${OPTARG} ;;
         h) help ;;
         v) version ;;
+        -)
+            case "${OPTARG}" in
+                update) update_script ;;
+                no-update) no_update=1 ;;
+                version) version ;;
+                *) usage ;;
+            esac
+            ;;
         *) usage ;;
     esac
 done
@@ -160,6 +162,11 @@ fi
 random_folder=$(mktemp -d -t ${display_name}_XXXXXXXXXX)
 zipname="$random_folder/$zipname"
 encryptedziplocation="$zipname.gpg"
+
+# Check for script updates if not skipped
+if [ "$no_update" -ne 1 ]; then
+    check_for_updates
+fi
 
 function check_for_stored_pgp_key() {
     if ! $GPG_CMD --list-keys "$pgp_certificate" &> /dev/null; then
