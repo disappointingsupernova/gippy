@@ -162,6 +162,11 @@ while getopts "e:a:z:b:p:c:o:h:v-:" opt; do
     esac
 done
 
+# Check for script updates if not skipped
+if [ "$no_update" -ne 1 ]; then
+    check_for_updates
+fi
+
 # Check if all required arguments are provided
 if [ -z "$email_address" ] && [ -z "$output" ]; then
     usage
@@ -174,11 +179,6 @@ fi
 random_folder=$(mktemp -d -t ${display_name}_XXXXXXXXXX)
 zipname="$random_folder/$zipname"
 encryptedziplocation="$zipname.gpg"
-
-# Check for script updates if not skipped
-if [ "$no_update" -ne 1 ]; then
-    check_for_updates
-fi
 
 function check_for_stored_pgp_key() {
     if ! $GPG_CMD --list-keys "$pgp_certificate" &> /dev/null; then
