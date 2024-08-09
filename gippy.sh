@@ -12,6 +12,7 @@ github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$
 log_file="/var/log/${display_name}.log"
 log_messages=""
 no_update=0 # Script should check for updates on startup
+email_domain=sarik.tech
 
 # Default PGP certificate fingerprint
 pgp_certificate="7D2D35B359A3BB1AE7A2034C0CB5BB0EFE677CA8"
@@ -24,7 +25,7 @@ fi
 # Check for shortcut commands
 if [ "$1" == "iptables" ]; then
     shift
-    set -- "-e" "iptables@sarik.tech" "-a" "iptables backup" "-z" "iptables.zip" "-b" "/etc/iptables" "-c" "/usr/sbin/iptables-save,/usr/sbin/ip6tables-save" "--no-update" "$@"
+    set -- "-e" "iptables@$email_domain" "-a" "iptables backup" "-z" "iptables.zip" "-b" "/etc/iptables" "-c" "/usr/sbin/iptables-save,/usr/sbin/ip6tables-save" "--no-update" "$@"
 fi
 
 # Function to display usage
