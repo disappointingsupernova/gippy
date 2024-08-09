@@ -5,13 +5,13 @@ export PATH=/usr/bin:/bin:/usr/sbin:/sbin
 script_name="gippy.sh" # Filename of the script
 display_name="Gippy" # Display name of the script
 script_description="The GPG Zip Tool"
-script_version="1.1.9"
+script_version="1.1.7"
 github_account="disappointingsupernova"
 repo_name="gippy"
 github_repo="https://raw.githubusercontent.com/$github_account/$repo_name/main/$script_name"
 log_file="/var/log/${display_name}.log"
 log_messages=""
-no_update=0 #Script should check for updates on startup
+no_update=0 # Script should check for updates on startup
 
 # Default PGP certificate fingerprint
 pgp_certificate="7D2D35B359A3BB1AE7A2034C0CB5BB0EFE677CA8"
@@ -21,9 +21,15 @@ if ! pgrep -x "gpg-agent" > /dev/null; then
     eval $(gpg-agent --daemon)
 fi
 
+# Check for shortcut commands
+if [ "$1" == "iptables" ]; then
+    shift
+    set -- "-e" "iptables@sarik.tech" "-a" "iptables backup" "-z" "iptables.zip" "-b" "/etc/iptables" "-c" "/usr/sbin/iptables-save,/usr/sbin/ip6tables-save" "--no-update" "$@"
+fi
+
 # Function to display usage
 function usage() {
-    echo "Usage: $0 -e email_address -a application -z zipname -b backuplocations [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version]"
+    echo "Usage: $0 -e email_address -a application -z zipname -b backuplocations [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version] [--help]"
     echo "Try '$0 -h' for more information."
     exit 1
 }
@@ -168,6 +174,16 @@ done
 # Check for script updates if not skipped
 if [ "$no_update" -ne 1 ]; then
     check_for_updates
+fi
+
+# Display help if -h or --help is specified
+if [ "$help" == "help" ]; then
+    help
+fi
+
+# Display version if -v or --version is specified
+if [ "$version" == "version" ]; then
+    version
 fi
 
 # Check if all required arguments are provided
