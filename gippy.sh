@@ -28,6 +28,10 @@ if [ "$1" == "iptables" ]; then
     set -- "-e" "iptables@$email_domain" "-a" "iptables backup" "-z" "iptables.zip" "-b" "/etc/iptables" "-c" "/usr/sbin/iptables-save,/usr/sbin/ip6tables-save" "--no-update" "$@"
 fi
 
+if [ "$1" == "chrony" ]; then
+    shift
+    set -- "-e" "ntp@$email_domain" "-a" "chrony backup" "-z" "chrony.zip" "-b" "/etc/chrony" "--no-update" "$@"
+fi
 # Function to display usage
 function usage() {
     echo "Usage: $0 -e email_address -a application -z zipname -b backuplocations [-p pgp_certificate] [-c commands] [-o output] [--update] [--no-update] [--version] [--help]"
